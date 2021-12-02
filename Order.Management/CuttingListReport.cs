@@ -7,12 +7,12 @@ namespace Order.Management
     class CuttingListReport : Order
     {
         public int tableWidth = 20;
-        public CuttingListReport(string customerName, string customerAddress, string dueDate, List<Shape> shapes)
+        public CuttingListReport(string customerName, string customerAddress, string dueDate, Dictionary<string, Dictionary<String, Toy>> OrderedRecords)
         {
             base.CustomerName = customerName;
             base.Address = customerAddress;
             base.DueDate = dueDate;
-            base.OrderedBlocks = shapes;
+            base.OrderedRecords = OrderedRecords;
         }
 
         public override void GenerateReport()
@@ -26,9 +26,16 @@ namespace Order.Management
             PrintLine();
             PrintRow("        ", "   Qty   ");
             PrintLine();
-            PrintRow("Square",base.OrderedBlocks[0].TotalQuantityOfShape().ToString());
-            PrintRow("Triangle", base.OrderedBlocks[1].TotalQuantityOfShape().ToString());
-            PrintRow("Circle", base.OrderedBlocks[2].TotalQuantityOfShape().ToString());
+
+            foreach (string shape in OrderedRecords.Keys)
+            {
+                int QuantitiyOfShape = 0;
+                foreach (string color in OrderedRecords[shape].Keys)
+                {
+                    QuantitiyOfShape += OrderedRecords[shape][color].toyNumbers;
+                }
+                PrintRow(shape, QuantitiyOfShape.ToString());
+            }
             PrintLine();
         }
         public void PrintLine()

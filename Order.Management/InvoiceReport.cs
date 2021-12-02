@@ -7,12 +7,12 @@ namespace Order.Management
     class InvoiceReport : Order
     {
         public int tableWidth = 73;
-        public InvoiceReport(string customerName, string customerAddress, string dueDate, List<Shape> shapes)
+        public InvoiceReport(string customerName, string customerAddress, string dueDate, Dictionary<string, Dictionary<String, Toy>> OrderedRecords)
         {
             base.CustomerName = customerName;
             base.Address = customerAddress;
             base.DueDate = dueDate;
-            base.OrderedBlocks = shapes;
+            base.OrderedRecords = OrderedRecords;
         }
 
         public override void GenerateReport()
@@ -20,49 +20,54 @@ namespace Order.Management
             Console.WriteLine("\nYour invoice report has been generated: ");
             Console.WriteLine(base.ToString());
             GenerateTable();
-            OrderSquareDetails();
-            OrderTriangleDetails();
-            OrderCircleDetails();
+            OrderToyDetail();
             RedPaintSurcharge();
         }
 
         public void RedPaintSurcharge()
         {
-            Console.WriteLine("Red Color Surcharge       " + TotalAmountOfRedShapes() + " @ $" + base.OrderedBlocks[0].AdditionalCharge + " ppi = $" + TotalPriceRedPaintSurcharge());
+            Console.WriteLine("Red Color Surcharge       " + TotalAmountOfRedShapes() + " @ $" + base.OrderedRecords["Circle"]["Red"].toyColor.AdditionalCharge + " ppi = $" + TotalPriceRedPaintSurcharge());
         }
 
         public int TotalAmountOfRedShapes()
         {
-            return base.OrderedBlocks[0].NumberOfRedShape + base.OrderedBlocks[1].NumberOfRedShape +
-                   base.OrderedBlocks[2].NumberOfRedShape;
+            return base.OrderedRecords["Circle"]["Red"].toyNumbers + base.OrderedRecords["Square"]["Red"].toyNumbers +
+                   base.OrderedRecords["Triangle"]["Red"].toyNumbers;
         }
 
         public int TotalPriceRedPaintSurcharge()
         {
-            return TotalAmountOfRedShapes() * base.OrderedBlocks[0].AdditionalCharge;
+            return TotalAmountOfRedShapes() * base.OrderedRecords["Circle"]["Red"].toyColor.AdditionalCharge;
         }
+
+
         public void GenerateTable()
         {
             PrintLine();
             PrintRow("        ", "   Red   ", "  Blue  ", " Yellow ");
             PrintLine();
-            PrintRow("Square", base.OrderedBlocks[0].NumberOfRedShape.ToString(), base.OrderedBlocks[0].NumberOfBlueShape.ToString(), base.OrderedBlocks[0].NumberOfYellowShape.ToString());
-            PrintRow("Triangle", base.OrderedBlocks[1].NumberOfRedShape.ToString(), base.OrderedBlocks[1].NumberOfBlueShape.ToString(), base.OrderedBlocks[1].NumberOfYellowShape.ToString());
-            PrintRow("Circle", base.OrderedBlocks[2].NumberOfRedShape.ToString(), base.OrderedBlocks[2].NumberOfBlueShape.ToString(), base.OrderedBlocks[2].NumberOfYellowShape.ToString());
+            foreach(string shape in OrderedRecords.Keys)
+            {
+                PrintRow(shape, base.OrderedRecords[shape]["Red"].toyNumbers.ToString(), base.OrderedRecords[shape]["Blue"].toyNumbers.ToString(), base.OrderedRecords[shape]["Yellow"].toyNumbers.ToString());
+            }
             PrintLine();
         }
-        public void OrderSquareDetails()
+
+        public void OrderToyDetail()
         {
-            Console.WriteLine("\nSquares 		  " + base.OrderedBlocks[0].TotalQuantityOfShape() + " @ $" + base.OrderedBlocks[0].Price + " ppi = $" + base.OrderedBlocks[0].Total());
+            foreach (string shape in OrderedRecords.Keys)
+            {
+                int QuantitiyOfShape = 0;
+                foreach(string color in OrderedRecords[shape].Keys)
+                {
+                    QuantitiyOfShape += OrderedRecords[shape][color].toyNumbers;
+                }
+                int shapePrice = OrderedRecords[shape]["Red"].toyShape.Price;
+                int shapesPrice = QuantitiyOfShape * shapePrice;
+                Console.WriteLine("\n" + shape + " 		  " + QuantitiyOfShape + " @ $" + shapePrice + " ppi = $" + shapesPrice);
+            }
         }
-        public void OrderTriangleDetails()
-        {
-            Console.WriteLine("Triangles 		  " + base.OrderedBlocks[1].TotalQuantityOfShape() + " @ $" + base.OrderedBlocks[1].Price + " ppi = $" + base.OrderedBlocks[1].Total());
-        }
-        public void OrderCircleDetails()
-        {
-            Console.WriteLine("Circles 		  " + base.OrderedBlocks[2].TotalQuantityOfShape() + " @ $" + base.OrderedBlocks[2].Price + " ppi = $" + base.OrderedBlocks[2].Total());
-        }
+       
         public void PrintLine()
         {
             Console.WriteLine(new string('-', tableWidth));

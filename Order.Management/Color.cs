@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Order.Management
 {
-    abstract class Shape
+    abstract class Color
     {
         public string Name { get; set; }
-        public int Price { get; set; } 
+        public int AdditionalCharge { get; set; }
     }
 }

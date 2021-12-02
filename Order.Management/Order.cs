@@ -12,6 +12,8 @@ namespace Order.Management
         public int OrderNumber { get; set; }
         public List<Shape> OrderedBlocks { get; set; }
 
+        public Dictionary<string, Dictionary<String, Toy>> OrderedRecords { get; set; }
+
         public abstract void GenerateReport();
 
         public string ToString()

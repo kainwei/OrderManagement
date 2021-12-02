@@ -7,12 +7,12 @@ namespace Order.Management
     class PaintingReport : Order
     {
         public int tableWidth = 73;
-        public PaintingReport(string customerName, string customerAddress, string dueDate, List<Shape> shapes)
+        public PaintingReport(string customerName, string customerAddress, string dueDate, Dictionary<string, Dictionary<String, Toy>> OrderedRecords)
         {
             base.CustomerName = customerName;
             base.Address = customerAddress;
             base.DueDate = dueDate;
-            base.OrderedBlocks = shapes;
+            base.OrderedRecords = OrderedRecords;
         }
         public override void GenerateReport()
         {
@@ -26,9 +26,10 @@ namespace Order.Management
             PrintLine();
             PrintRow("        ", "   Red   ", "  Blue  ", " Yellow ");
             PrintLine();
-            PrintRow("Square", base.OrderedBlocks[0].NumberOfRedShape.ToString(), base.OrderedBlocks[0].NumberOfBlueShape.ToString(), base.OrderedBlocks[0].NumberOfYellowShape.ToString());
-            PrintRow("Triangle", base.OrderedBlocks[1].NumberOfRedShape.ToString(), base.OrderedBlocks[1].NumberOfBlueShape.ToString(), base.OrderedBlocks[1].NumberOfYellowShape.ToString());
-            PrintRow("Circle", base.OrderedBlocks[2].NumberOfRedShape.ToString(), base.OrderedBlocks[2].NumberOfBlueShape.ToString(), base.OrderedBlocks[2].NumberOfYellowShape.ToString());
+            foreach (string shape in OrderedRecords.Keys)
+            {
+                PrintRow(shape, base.OrderedRecords[shape]["Red"].toyNumbers.ToString(), base.OrderedRecords[shape]["Blue"].toyNumbers.ToString(), base.OrderedRecords[shape]["Yellow"].toyNumbers.ToString());
+            }
             PrintLine();
         }
        
